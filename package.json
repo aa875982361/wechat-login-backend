@@ -1,0 +1,23 @@
+{
+  "name": "wechat-login-backend",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aa875982361/wechat-login-backend-.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/aa875982361/wechat-login-backend-/issues"
+  },
+  "homepage": "https://github.com/aa875982361/wechat-login-backend-#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
+}
