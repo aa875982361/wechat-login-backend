@@ -39,14 +39,14 @@ npm install
 # 通过pm2 启动服务
 # 先restart pm2的服务 
 echo "开始重启pm2 服务"
-npx pm2 restart wechat_login
+pm2 restart wechat_login
 # 输出执行结果
 if [ $? -eq 0 ]; then  
     echo "restart 成功"
 else  
     echo "restart 出错" 
     echo "start 一下"
-    npx pm2 start ts-node --name=wechat_login -- --transpile-only ./src/index.ts
+    pm2 start ts-node --name=wechat_login -- --transpile-only ./src/index.ts
     if [ $? -eq 0 ]; then  
         echo "start 成功"
     else  
