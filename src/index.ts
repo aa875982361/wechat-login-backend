@@ -2,6 +2,8 @@ import express from 'express';
 import config from './config';
 const axios = require("axios");
 const querystring = require("querystring");
+const crypto = require('crypto');
+
 
 const app = express();
 
@@ -10,6 +12,7 @@ const APP_ID = config.APP_ID;
 const APP_SECRET = config.APP_SECRET;
 const STATE = config.STATE; // 自定义参数，可以用来防止跨站请求伪造
 const redirectUri = `${config.HOST}/wechat/callback`;
+const token = config.TOKEN || ""
 
 // 处理微信授权登录的回调接口
 app.get("/wechat/callback", async (req, res) => {
@@ -87,6 +90,26 @@ app.get("/oauth/qrcode", async (req, res) => {
   console.log("qrcode data", data)
   return res.send(data);
 });
+
+app.get('/wechat', (req, res) => {
+  const signature = req.query.signature;
+  const timestamp = req.query.timestamp;
+  const nonce = req.query.nonce;
+  const echostr = req.query.echostr;
+
+  const signatureArr = [token, timestamp, nonce];
+  signatureArr.sort();
+  const signatureStr = signatureArr.join('');
+  const genSignature = crypto.createHash('sha1').update(signatureStr).digest('hex');
+
+  if (genSignature === signature) {
+    res.send(echostr);
+  } else {
+    res.send('Invalid signature');
+  }
+});
+
+
 
 const port = process.env.PORT || 3000;
 app.listen(port, () => console.log(`Server running on port ${port}`));
