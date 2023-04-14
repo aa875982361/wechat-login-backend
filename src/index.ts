@@ -8,7 +8,8 @@ const app = express();
 // 微信公众号 AppID 和 AppSecret, 需要在微信公众号平台上注册并获取
 const APP_ID = config.APP_ID;
 const APP_SECRET = config.APP_SECRET;
-const STATE = ""; // 自定义参数，可以用来防止跨站请求伪造
+const STATE = config.STATE; // 自定义参数，可以用来防止跨站请求伪造
+const redirectUri = `${config.HOST}/wechat/callback`;
 
 // 处理微信授权登录的回调接口
 app.get("/wechat/callback", async (req, res) => {
@@ -43,7 +44,6 @@ app.get("/wechat/callback", async (req, res) => {
 // 生成微信授权链接的接口
 app.get("/wechat/auth", (req, res) => {
   // redirect_uri 是微信授权后回调的地址，需要在微信公众号平台上配置
-  const redirectUri = "http://127.0.0.1:3000/wechat/callback";
 
   const scope = "snsapi_userinfo";
   const appId = APP_ID;
@@ -66,7 +66,7 @@ app.get("/wechat/auth", (req, res) => {
 // 生成带有扫码状态的二维码
 app.get("/oauth/qrcode", async (req, res) => {
   const redirect_uri = encodeURIComponent(
-    `http://127.0.0.1:3000/wechat/callback`
+    redirectUri
   ); // 回调地址，需要在公众号后台配置
   const scope = "snsapi_base";
   const appId = APP_ID;
