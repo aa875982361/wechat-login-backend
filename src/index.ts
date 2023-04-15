@@ -82,7 +82,7 @@ app.get("/oauth/qrcode", async (req, res) => {
   };
   const url = `https://open.weixin.qq.com/connect/qrconnect?appid=${APP_ID}&response_type=code&scope=snsapi_userinfo&redirect_uri=${redirect_uri}&state=${STATE}#wechat_redirect`
   const { data } = await axios.get(
-    `https://open.weixin.qq.com/connect/qrconnect?appid=${APP_ID}&response_type=code&scope=snsapi_userinfo&redirect_uri=${redirect_uri}&state=${STATE}#wechat_redirect`
+    `https://open.weixin.qq.com/connect/qrconnect?appid=${APP_ID}&response_type=code&scope=snsapi_login&redirect_uri=${redirect_uri}&state=${STATE}#wechat_redirect`
   );
 
   console.log("url", url)
