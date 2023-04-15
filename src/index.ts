@@ -98,10 +98,14 @@ app.get('/wechat', (req, res) => {
   const echostr = req.query.echostr;
 
   const signatureArr = [token, timestamp, nonce];
+  console.log("signatureArr", signatureArr);
+  
   signatureArr.sort();
   const signatureStr = signatureArr.join('');
   const genSignature = crypto.createHash('sha1').update(signatureStr).digest('hex');
-
+  console.log("genSignature", genSignature);
+  console.log("signature", signature);
+  
   if (genSignature === signature) {
     res.send(echostr);
   } else {
