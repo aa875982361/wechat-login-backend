@@ -12,9 +12,8 @@ const app = express();
 //   cert: fs.readFileSync('/path/to/domain.crt'),
 //   key: fs.readFileSync('/path/to/domain.key')
 // }
-const httpsAgent = new https.Agent({ rejectUnauthorized: false });
-
-
+// const  axiosConfig = { proxy: { host: "127.0.0.1", port: 7890 } }
+const httpsAgent = new https.Agent({ host: "127.0.0.1", port: 7890, rejectUnauthorized: false });
 
 // 微信公众号 AppID 和 AppSecret, 需要在微信公众号平台上注册并获取
 const APP_ID = config.APP_ID;
