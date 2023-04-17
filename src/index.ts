@@ -3,19 +3,26 @@ import config from './config';
 const axios = require("axios");
 const querystring = require("querystring");
 const crypto = require('crypto');
-
+const fs = require('fs')
 
 const app = express();
+
+// const httpsOptions = {
+//   cert: fs.readFileSync('/path/to/domain.crt'),
+//   key: fs.readFileSync('/path/to/domain.key')
+// }
+
+
 
 // 微信公众号 AppID 和 AppSecret, 需要在微信公众号平台上注册并获取
 const APP_ID = config.APP_ID;
 const APP_SECRET = config.APP_SECRET;
 const STATE = config.STATE; // 自定义参数，可以用来防止跨站请求伪造
-const redirectUri = `${config.HOST}/wechat/callback`;
+const redirectUri = `${config.HOST}/api/wechat/callback`;
 const token = config.TOKEN || ""
 
 // 处理微信授权登录的回调接口
-app.get("/wechat/callback", async (req, res) => {
+app.get("/api/wechat/callback", async (req, res) => {
   const { code } = req.query;
 
   if (!code) {
@@ -45,7 +52,7 @@ app.get("/wechat/callback", async (req, res) => {
 });
 
 // 生成微信授权链接的接口
-app.get("/wechat/auth", (req, res) => {
+app.get("/api/wechat/auth", (req, res) => {
   // redirect_uri 是微信授权后回调的地址，需要在微信公众号平台上配置
 
   const scope = "snsapi_userinfo";
@@ -91,7 +98,7 @@ app.get("/oauth/qrcode", async (req, res) => {
   return res.send(data);
 });
 
-app.get('/wechat', (req, res) => {
+app.get('/api/wechat', (req, res) => {
   const signature = req.query.signature;
   const timestamp = req.query.timestamp;
   const nonce = req.query.nonce;
