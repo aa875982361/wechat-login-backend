@@ -14,7 +14,7 @@ const app = express();
 //   key: fs.readFileSync('/path/to/domain.key')
 // }
 // const  axiosConfig = { proxy: { host: "127.0.0.1", port: 7890 } }
-const httpsAgent = new httpsProxyAgent({ host: "http://127.0.0.1", port: 7890 });
+const httpsAgent = new httpsProxyAgent("http://127.0.0.1:7890");
 
 // 微信公众号 AppID 和 AppSecret, 需要在微信公众号平台上注册并获取
 const APP_ID = config.APP_ID;
@@ -33,19 +33,20 @@ app.get("/api/wechat/callback", async (req, res) => {
 
   try {
     // 获取access_token
-    const { data: tokenData } = await axios.get(
-      `https://api.weixin.qq.com/sns/oauth2/access_token?appid=${APP_ID}&secret=${APP_SECRET}&code=${code}&grant_type=authorization_code`
-    ,{
-        httpsAgent
+    const tokenUrl = `https://api.weixin.qq.com/sns/oauth2/access_token?appid=${APP_ID}&secret=${APP_SECRET}&code=${code}&grant_type=authorization_code`
+    const { data: tokenData } = await axios.request({
+      url: tokenUrl,
+      httpsAgent,
+      method: "GET"
     });
 
     // 获取用户信息
     const { access_token, openid } = tokenData;
-    const { data: userData } = await axios.get(
-      `https://api.weixin.qq.com/sns/userinfo?access_token=${access_token}&openid=${openid}&lang=zh_CN`
-    ,{
-      httpsAgent
-    });
+    const { data: userData } = await axios.request({
+      url: `https://api.weixin.qq.com/sns/userinfo?access_token=${access_token}&openid=${openid}&lang=zh_CN`,
+      httpsAgent,
+      method: "GET"
+    })
 
     // TODO: 在此处处理用户信息，例如存储到数据库中
     console.log("userData", userData)
