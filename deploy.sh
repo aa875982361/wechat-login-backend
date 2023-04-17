@@ -31,7 +31,7 @@ else
 fi  
 
 # 设置环境变量
-export PORT=8088
+export PORT=8080
 # 安装依赖库
 npm install
 # 启动服务
