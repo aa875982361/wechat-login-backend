@@ -1,5 +1,6 @@
 import express from 'express';
 import config from './config';
+import https from 'https'
 const axios = require("axios");
 const querystring = require("querystring");
 const crypto = require('crypto');
@@ -11,6 +12,7 @@ const app = express();
 //   cert: fs.readFileSync('/path/to/domain.crt'),
 //   key: fs.readFileSync('/path/to/domain.key')
 // }
+const httpsAgent = new https.Agent({ rejectUnauthorized: false });
 
 
 
@@ -33,13 +35,17 @@ app.get("/api/wechat/callback", async (req, res) => {
     // 获取access_token
     const { data: tokenData } = await axios.get(
       `https://api.weixin.qq.com/sns/oauth2/access_token?appid=${APP_ID}&secret=${APP_SECRET}&code=${code}&grant_type=authorization_code`
-    );
+    ,{
+        httpsAgent
+    });
 
     // 获取用户信息
     const { access_token, openid } = tokenData;
     const { data: userData } = await axios.get(
       `https://api.weixin.qq.com/sns/userinfo?access_token=${access_token}&openid=${openid}&lang=zh_CN`
-    );
+    ,{
+      httpsAgent
+    });
 
     // TODO: 在此处处理用户信息，例如存储到数据库中
     console.log("userData", userData)
