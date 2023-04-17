@@ -5,6 +5,7 @@ const axios = require("axios");
 const querystring = require("querystring");
 const crypto = require('crypto');
 const fs = require('fs')
+const httpsProxyAgent = require('https-proxy-agent');
 
 const app = express();
 
@@ -13,7 +14,7 @@ const app = express();
 //   key: fs.readFileSync('/path/to/domain.key')
 // }
 // const  axiosConfig = { proxy: { host: "127.0.0.1", port: 7890 } }
-const httpsAgent = new https.Agent({ host: "127.0.0.1", port: 7890, rejectUnauthorized: false });
+const httpsAgent = new httpsProxyAgent({ host: "127.0.0.1", port: 7890 });
 
 // 微信公众号 AppID 和 AppSecret, 需要在微信公众号平台上注册并获取
 const APP_ID = config.APP_ID;
