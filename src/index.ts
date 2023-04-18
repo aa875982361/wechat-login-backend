@@ -95,9 +95,14 @@ app.get("/api/wechat/auth", (req, res) => {
 app.get("/api/oauth/qrcode", async (req, res) => {
   // 场景值
   const scene = getOnlyOneScene()
+  console.log("/api/oauth/qrcode scene", scene);
+  
   const accessToken = await getAccessToken()
+  console.log("/api/oauth/qrcode accessToken", accessToken)
   // 构建请求url
   const getQrCodeUrl = `${QrCodeBase}?access_token=${accessToken}`
+  console.log("/api/oauth/qrcode getQrCodeUrl");
+  
   // {"ticket":"gQH47joAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL2taZ2Z3TVRtNzJXV1Brb3ZhYmJJAAIEZ23sUwMEmm
   // 3sUw==","expire_seconds":60,"url":"http://weixin.qq.com/q/kZgfwMTm72WWPkovabbI"}
   // 文档：https://developers.weixin.qq.com/doc/offiaccount/Account_Management/Generating_a_Parametric_QR_Code.html
@@ -115,14 +120,21 @@ app.get("/api/oauth/qrcode", async (req, res) => {
       }
     }
   })
+  console.log("/api/oauth/qrcode getQrCodeUrl response", response);
+  
   const { ticket, expire_seconds, url } = response?.data || {} 
+  console.log("/api/oauth/qrcode ticket", ticket);
+  console.log("/api/oauth/qrcode url", url);
+  
   // 生成二维码图片的URL
   const qrcodeUrl = `https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=${encodeURIComponent(ticket)}`;
+  
   const result = {
     qrcodeUrl,
     scene
   }
-  return res.send(JSON.stringify({ticket, expire_seconds, url}));
+  console.log("/api/oauth/qrcode result", result);
+  return res.send(JSON.stringify(result));
 });
 
 app.get('/api/wechat', (req, res) => {
