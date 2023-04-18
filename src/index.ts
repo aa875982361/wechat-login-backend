@@ -37,6 +37,7 @@ app.get("/api/wechat/callback", async (req, res) => {
     const { data: tokenData } = await axios.request({
       url: tokenUrl,
       httpsAgent,
+      proxy: false,
       method: "GET"
     });
 
@@ -45,6 +46,7 @@ app.get("/api/wechat/callback", async (req, res) => {
     const { data: userData } = await axios.request({
       url: `https://api.weixin.qq.com/sns/userinfo?access_token=${access_token}&openid=${openid}&lang=zh_CN`,
       httpsAgent,
+      proxy: false,
       method: "GET"
     })
 
