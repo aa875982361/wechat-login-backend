@@ -92,7 +92,7 @@ app.get("/api/wechat/auth", (req, res) => {
 });
 
 // 生成带有扫码状态的二维码
-app.get("/oauth/qrcode", async (req, res) => {
+app.get("/api/oauth/qrcode", async (req, res) => {
   // 场景值
   const scene = getOnlyOneScene()
   const accessToken = await getAccessToken()
