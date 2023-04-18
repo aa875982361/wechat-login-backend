@@ -1,6 +1,10 @@
 import express from 'express';
 import config from './config';
 import https from 'https'
+import { getAccessToken } from './accessToken';
+import { request } from './request';
+import { QrCodeBase } from './url';
+import { getOnlyOneScene } from './sceneManager';
 const axios = require("axios");
 const querystring = require("querystring");
 const crypto = require('crypto');
@@ -8,6 +12,10 @@ const fs = require('fs')
 const httpsProxyAgent = require('https-proxy-agent');
 
 const app = express();
+
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 
 // const httpsOptions = {
 //   cert: fs.readFileSync('/path/to/domain.crt'),
@@ -22,6 +30,7 @@ const APP_SECRET = config.APP_SECRET;
 const STATE = config.STATE; // 自定义参数，可以用来防止跨站请求伪造
 const redirectUri = `${config.HOST}/api/wechat/callback`;
 const token = config.TOKEN || ""
+
 
 // 处理微信授权登录的回调接口
 app.get("/api/wechat/callback", async (req, res) => {
@@ -84,27 +93,36 @@ app.get("/api/wechat/auth", (req, res) => {
 
 // 生成带有扫码状态的二维码
 app.get("/oauth/qrcode", async (req, res) => {
-  const redirect_uri = encodeURIComponent(
-    redirectUri
-  ); // 回调地址，需要在公众号后台配置
-  const scope = "snsapi_base";
-  const appId = APP_ID;
-  const params = {
-    appid: appId,
-    redirect_uri: redirect_uri,
-    response_type: "code",
-    scope: scope,
-    state: STATE,
-  };
-  const url = `https://open.weixin.qq.com/connect/qrconnect?appid=${APP_ID}&response_type=code&scope=snsapi_userinfo&redirect_uri=${redirect_uri}&state=${STATE}#wechat_redirect`
-  const { data } = await axios.get(
-    `https://open.weixin.qq.com/connect/qrconnect?appid=${APP_ID}&response_type=code&scope=snsapi_login&redirect_uri=${redirect_uri}&state=${STATE}#wechat_redirect`
-  );
-
-  console.log("url", url)
-
-  console.log("qrcode data", data)
-  return res.send(data);
+  // 场景值
+  const scene = getOnlyOneScene()
+  const accessToken = await getAccessToken()
+  // 构建请求url
+  const getQrCodeUrl = `${QrCodeBase}?access_token=${accessToken}`
+  // {"ticket":"gQH47joAAAAAAAAAASxodHRwOi8vd2VpeGluLnFxLmNvbS9xL2taZ2Z3TVRtNzJXV1Brb3ZhYmJJAAIEZ23sUwMEmm
+  // 3sUw==","expire_seconds":60,"url":"http://weixin.qq.com/q/kZgfwMTm72WWPkovabbI"}
+  // 文档：https://developers.weixin.qq.com/doc/offiaccount/Account_Management/Generating_a_Parametric_QR_Code.html
+  // 获取ticket
+  const response = await request({
+    url: getQrCodeUrl,
+    method: "POST",
+    data: {
+      "expire_seconds": 604800,
+      "action_name": "QR_STR_SCENE",
+      "action_info": {
+        "scene": {
+          "scene_str": scene
+        }
+      }
+    }
+  })
+  const { ticket, expire_seconds, url } = response?.data || {} 
+  // 生成二维码图片的URL
+  const qrcodeUrl = `https://mp.weixin.qq.com/cgi-bin/showqrcode?ticket=${encodeURIComponent(ticket)}`;
+  const result = {
+    qrcodeUrl,
+    scene
+  }
+  return res.send(JSON.stringify({ticket, expire_seconds, url}));
 });
 
 app.get('/api/wechat', (req, res) => {
