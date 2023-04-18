@@ -28,13 +28,14 @@ export async function getAccessToken(): Promise<string> {
   if(!getAccessTokenPromise){
     getAccessTokenPromise = request({
       url: getAccessTokenUrl
-    }).then(data => {
+    }).then(res => {
+      console.log("getAccessToken", res?.data?.access_token);
       // 重置
       getAccessTokenPromise = undefined
       // 保存accessToken
-      accessToken = data?.access_token
+      accessToken = res?.data?.access_token
       // 返回结果
-      return data?.access_token
+      return res?.data?.access_token
     })
   }
   return await getAccessTokenPromise
