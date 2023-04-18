@@ -138,6 +138,8 @@ app.get("/api/oauth/qrcode", async (req, res) => {
 });
 
 app.get('/api/wechat', (req, res) => {
+  console.log("/api/wechat query", req.query)
+  console.log("/api/wechat body", req.body)
   const signature = req.query.signature;
   const timestamp = req.query.timestamp;
   const nonce = req.query.nonce;
