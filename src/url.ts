@@ -1,0 +1,1 @@
+export const QrCodeBase = `https://api.weixin.qq.com/cgi-bin/qrcode/create`
