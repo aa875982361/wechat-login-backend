@@ -120,7 +120,7 @@ app.get("/api/oauth/qrcode", async (req, res) => {
       }
     }
   })
-  console.log("/api/oauth/qrcode getQrCodeUrl response", response);
+  console.log("/api/oauth/qrcode getQrCodeUrl response", response.data);
   
   const { ticket, expire_seconds, url } = response?.data || {} 
   console.log("/api/oauth/qrcode ticket", ticket);
