@@ -205,18 +205,43 @@ app.post('/api/wechat', (req, res) => {
          'gQHh8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyS25Fbk04LUNjREcxaGxuOTFBY2EAAgTV3D9kAwSAOgkA'
        ]
      }
+
+    {
+      tousername: [ 'gh_00eefa0749a6' ],
+      fromusername: [ 'oPuYn6p-ugQrPrg2AJgLhscRPdkw' ],
+      createtime: [ '1681913092' ],
+      msgtype: [ 'event' ],
+      event: [ 'subscribe' ],
+      eventkey: [ 'qrscene_AmQ2SGOMsnpiK7OOeXVOMMC35FxNxfkO' ],
+      ticket: [
+        'gQGT8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAybk96VE5ULUNjREcxaFhMOU5BY04AAgT79D9kAwSAOgkA'
+      ]
+    }
    */
   const {event = [], eventkey = [], fromusername = [] } = xml
   const eventName = event[0] || ""
+  const userOpenId = fromusername[0] || ""
   switch(eventName){
     case "SCAN":
-      const userOpenId = fromusername[0] || ""
       const scene = eventkey[0] || ""
       if(!userOpenId || !scene){
         console.warn("没有用户openid 或者没有scene", userOpenId, scene)
       }else{
         // 设置场景值对应的openid
         setSceneToken(scene, userOpenId)
+      }
+      break
+    case "subscribe":
+      // qrscene_AmQ2SGOMsnpiK7OOeXVOMMC35FxNxfkO
+      const qrSceneStr = eventkey[0] || ""
+      // 如果是扫码关注的场景
+      // 需要分割场景值
+      const realScene = qrSceneStr.split("_")[1] || ""
+      if(!userOpenId || !realScene){
+        console.warn("没有用户 openid 或者没有 realScene", userOpenId, realScene)
+      }else{
+        // 设置场景值对应的openid
+        setSceneToken(realScene, userOpenId)
       }
       break
   }
