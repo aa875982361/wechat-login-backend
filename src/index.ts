@@ -163,7 +163,7 @@ app.get('/api/wechat', (req, res) => {
   if (genSignature === signature) {
     res.send(echostr);
   } else {
-    res.send("")
+    res.send("success")
   }
 });
 
