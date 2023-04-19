@@ -4,7 +4,7 @@ import https from 'https'
 import { getAccessToken } from './accessToken';
 import { request } from './request';
 import { QrCodeBase } from './url';
-import { getOnlyOneScene } from './sceneManager';
+import { getOnlyOneScene, getSceneToken } from './sceneManager';
 import bodyParser from 'body-parser'; // 引入 body-parser 中间件
 const axios = require("axios");
 const querystring = require("querystring");
@@ -142,6 +142,19 @@ app.get("/api/oauth/qrcode", async (req, res) => {
   return res.send(JSON.stringify(result));
 });
 
+app.get("/api/oauth/scene", async (req, res) => {
+  const scene = req.query.scene as string || "" 
+  console.log("/api/oauth/scene", scene);
+  // 检查scene 有没有登录成功
+  const token = getSceneToken(scene)
+  const result = {
+    token
+  }
+  console.log("/api/oauth/scene result", result);
+  return res.send(JSON.stringify(result));
+  
+})
+
 app.get('/api/wechat', (req, res) => {
   console.log("/api/wechat query", req.query)
   console.log("/api/wechat body", req.body)
@@ -165,6 +178,28 @@ app.get('/api/wechat', (req, res) => {
   } else {
     res.send("success")
   }
+});
+// 接受微信的消息推送
+app.post('/api/wechat', (req, res) => {
+  console.log("/api/wechat query", req.query)
+  console.log("/api/wechat body", req.body)
+  console.log("/api/wechat body xml ", req.body?.xml)
+  res.send("success")
+  let xml = req.body.xml // 获取 POST 请求中的 xml 数据
+  // 将 xml 数据解析成 JSON 对象
+  xml2js.parseString(xml, {explicitArray: false}, (err: any, json: any) => {
+    if (err) {
+      console.log('解析 XML 错误')
+      console.log(err)
+      return res.send('error')
+    }
+    let result = json.xml
+    // 在这里对接收到的消息进行处理
+    console.log(result)
+    // 返回成功
+    res.send('success')
+  })
+
 });
 
 
