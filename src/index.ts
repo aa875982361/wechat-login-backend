@@ -5,16 +5,21 @@ import { getAccessToken } from './accessToken';
 import { request } from './request';
 import { QrCodeBase } from './url';
 import { getOnlyOneScene } from './sceneManager';
+import bodyParser from 'body-parser'; // 引入 body-parser 中间件
 const axios = require("axios");
 const querystring = require("querystring");
 const crypto = require('crypto');
 const fs = require('fs')
 const httpsProxyAgent = require('https-proxy-agent');
+const xml2js = require('xml2js') // 引入 xml2js 库
+
 
 const app = express();
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
 
 
 // const httpsOptions = {
@@ -140,6 +145,7 @@ app.get("/api/oauth/qrcode", async (req, res) => {
 app.get('/api/wechat', (req, res) => {
   console.log("/api/wechat query", req.query)
   console.log("/api/wechat body", req.body)
+  console.log("/api/wechat body xml ", req.body?.xml)
   const signature = req.query.signature;
   const timestamp = req.query.timestamp;
   const nonce = req.query.nonce;
@@ -157,7 +163,7 @@ app.get('/api/wechat', (req, res) => {
   if (genSignature === signature) {
     res.send(echostr);
   } else {
-    res.send('Invalid signature');
+    res.send("")
   }
 });
 
