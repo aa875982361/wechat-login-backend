@@ -12,6 +12,7 @@ const crypto = require('crypto');
 const fs = require('fs')
 const httpsProxyAgent = require('https-proxy-agent');
 const xml2js = require('xml2js') // 引入 xml2js 库
+const xmlParser = require('express-xml-bodyparser');
 
 
 const app = express();
@@ -19,6 +20,7 @@ const app = express();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(xmlParser()); /* 为了解析微信的 xml 格式的文件而加入的 */
 
 
 
@@ -185,20 +187,23 @@ app.post('/api/wechat', (req, res) => {
   console.log("/api/wechat body", req.body)
   console.log("/api/wechat body xml ", req.body?.xml)
   res.send("success")
-  let xml = req.body.xml // 获取 POST 请求中的 xml 数据
-  // 将 xml 数据解析成 JSON 对象
-  xml2js.parseString(xml, {explicitArray: false}, (err: any, json: any) => {
-    if (err) {
-      console.log('解析 XML 错误')
-      console.log(err)
-      return res.send('error')
-    }
-    let result = json.xml
-    // 在这里对接收到的消息进行处理
-    console.log(result)
-    // 返回成功
-    res.send('success')
-  })
+  // let xml = req.body.xml // 获取 POST 请求中的 xml 数据
+  // if(!xml){
+
+  // }
+  // // 将 xml 数据解析成 JSON 对象
+  // xml2js.parseString(xml, {explicitArray: false}, (err: any, json: any) => {
+  //   if (err) {
+  //     console.log('解析 XML 错误')
+  //     console.log(err)
+  //     return res.send('error')
+  //   }
+  //   let result = json.xml
+  //   // 在这里对接收到的消息进行处理
+  //   console.log(result)
+  //   // 返回成功
+  //   res.send('success')
+  // })
 
 });
 
