@@ -21,7 +21,7 @@ export function getOnlyOneScene(): string{
   // 没有结果scene 或者 原本存在 就继续换
   while(!resultScene || sceneMap[resultScene]){
     // 生成新的scene
-    resultScene = generateRandomString(16)
+    resultScene = generateRandomString(32)
   }
   // 初始化
   sceneMap[resultScene] = {
@@ -29,6 +29,15 @@ export function getOnlyOneScene(): string{
     expireTime: +new Date() + effectiveTime
   }
   return resultScene
+}
+/**
+ * 获取场景值对应的参数
+ * @param scene 
+ * @returns 
+ */
+export function getSceneToken(scene: string): string {
+  const token = scene && sceneMap[scene] && sceneMap[scene].token || ""
+  return token
 }
 
 /**
