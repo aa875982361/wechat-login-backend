@@ -41,6 +41,27 @@ export function getSceneToken(scene: string): string {
 }
 
 /**
+ * 设置场景值对应的openid
+ * @param scene 
+ * @param openId 
+ * @returns 
+ */
+export function setSceneToken(scene: string, openId: string): boolean{
+  if(!scene || !openId){
+    return false
+  }
+  if(!sceneMap[scene]){
+    console.warn("没有对应的场景值", scene)
+    return false
+  }
+  // TODO:接入生成jwt的服务
+  console.log("setSceneToken 成功", scene, openId);
+  
+  sceneMap[scene].token = openId
+  return true
+}
+
+/**
  * 获取随机字符
  * @param length 
  * @returns 

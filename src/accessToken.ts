@@ -29,7 +29,7 @@ export async function getAccessToken(): Promise<string> {
     getAccessTokenPromise = request({
       url: getAccessTokenUrl
     }).then(res => {
-      console.log("getAccessToken", res?.data, res);
+      console.log("getAccessToken", res?.data);
       // 重置
       getAccessTokenPromise = undefined
       // 保存accessToken

@@ -4,7 +4,7 @@ import https from 'https'
 import { getAccessToken } from './accessToken';
 import { request } from './request';
 import { QrCodeBase } from './url';
-import { getOnlyOneScene, getSceneToken } from './sceneManager';
+import { getOnlyOneScene, getSceneToken, setSceneToken } from './sceneManager';
 import bodyParser from 'body-parser'; // 引入 body-parser 中间件
 const axios = require("axios");
 const querystring = require("querystring");
@@ -186,24 +186,42 @@ app.post('/api/wechat', (req, res) => {
   console.log("/api/wechat query", req.query)
   console.log("/api/wechat body", req.body)
   console.log("/api/wechat body xml ", req.body?.xml)
+  let xml = req.body.xml // 获取 POST 请求中的 xml 数据
+  if(!xml){
+    console.warn("没有xml消息体");
+    
+    res.send("success")
+    return
+  }
+  /**
+   * {
+       tousername: [ 'gh_00eefa0749a6' ],
+       fromusername: [ 'oPuYn6s3yuFnvmk74ZhYajZyrVCY' ],
+       createtime: [ '1681906907' ],
+       msgtype: [ 'event' ],
+       event: [ 'SCAN' ],
+       eventkey: [ 'gcy6uIm5KzTxxA9uRWkQXSWJLjLZ7RGz' ],
+       ticket: [
+         'gQHh8DwAAAAAAAAAAS5odHRwOi8vd2VpeGluLnFxLmNvbS9xLzAyS25Fbk04LUNjREcxaGxuOTFBY2EAAgTV3D9kAwSAOgkA'
+       ]
+     }
+   */
+  const {event = [], eventkey = [], fromusername = [] } = xml
+  const eventName = event[0] || ""
+  switch(eventName){
+    case "SCAN":
+      const userOpenId = fromusername[0] || ""
+      const scene = eventkey[0] || ""
+      if(!userOpenId || !scene){
+        console.warn("没有用户openid 或者没有scene", userOpenId, scene)
+      }else{
+        // 设置场景值对应的openid
+        setSceneToken(scene, userOpenId)
+      }
+      break
+  }
+  // 如果前面没有返回值 默认返回成功
   res.send("success")
-  // let xml = req.body.xml // 获取 POST 请求中的 xml 数据
-  // if(!xml){
-
-  // }
-  // // 将 xml 数据解析成 JSON 对象
-  // xml2js.parseString(xml, {explicitArray: false}, (err: any, json: any) => {
-  //   if (err) {
-  //     console.log('解析 XML 错误')
-  //     console.log(err)
-  //     return res.send('error')
-  //   }
-  //   let result = json.xml
-  //   // 在这里对接收到的消息进行处理
-  //   console.log(result)
-  //   // 返回成功
-  //   res.send('success')
-  // })
 
 });
 
